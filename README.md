@@ -5,7 +5,7 @@
 [![Reference: Anderson Ch. 11](https://img.shields.io/badge/Reference-Anderson%20Ch.%2011-orange.svg)]()
 [![CFD Benchmark: SU2 Euler](https://img.shields.io/badge/CFD%20Benchmark-SU2%20Euler%20Validated-brightgreen.svg)]()
 
-A high-fidelity, modular 2D planar **Method of Characteristics (MoC)** solver and shape optimization suite for supersonic diffusing nozzles. The mathematical formulation strictly adheres to **John D. Anderson's *Modern Compressible Flow*, Chapter 11**, incorporating 2nd-order modified Euler spatial accuracy, full characteristic wave reflection mechanics, and global shape optimization using **Differential Evolution**.
+A modular 2D planar **Method of Characteristics (MoC)** solver and shape optimization suite for supersonic diffusing nozzles. The mathematical formulation strictly adheres to **John D. Anderson's *Modern Compressible Flow*, Chapter 11**, incorporating 2nd-order modified Euler spatial accuracy, full characteristic wave reflection mechanics, and global shape optimization using **Differential Evolution**.
 
 ---
 
@@ -14,7 +14,6 @@ A high-fidelity, modular 2D planar **Method of Characteristics (MoC)** solver an
 - [Mathematical Formulation](#mathematical-formulation)
   - [Characteristic Directions & Compatibility Equations](#1-characteristic-directions--compatibility-equations)
   - [Anderson's 4 Unit Processes](#2-andersons-4-unit-processes)
-  - [Nozzle Contour Synthesis (MLN) vs. Direct Analysis](#3-nozzle-contour-synthesis-mln-vs-direct-analysis)
 - [Architecture & Repository Structure](#architecture--repository-structure)
 - [Validation & Verification (Step 2)](#validation--verification-step-2)
   - [1. Anderson Chapter 11 Benchmark (Example 11.1)](#1-anderson-chapter-11-benchmark-example-111)
@@ -32,9 +31,8 @@ A high-fidelity, modular 2D planar **Method of Characteristics (MoC)** solver an
 
 ## Key Features
 
-1. **Golden Reference MoC Formulation**: Formulated directly from Anderson's *Modern Compressible Flow* Chapter 11 using 2nd-order modified Euler average characteristic slopes.
-2. **Machine-Precision Thermodynamic Inversion**: Robust bracketed root-solving for the inverse Prandtl-Meyer function $\text{inv}\_\nu(\nu)$ ensuring machine-precision ($\approx 10^{-13}$) convergence without singularities near $M = 1.0$.
-3. **Dual Operating Modes**:
+1. Formulated directly from Anderson's *Modern Compressible Flow* Chapter 11 using 2nd-order modified Euler average characteristic slopes.
+3. **Two modes**:
    - **Design Mode (Contour Synthesis)**: Absorbs expansion waves at the wall without reflections to design shock-free Minimum-Length Nozzles (MLN).
    - **Direct Analysis Mode**: Marches characteristics through arbitrary pre-existing walls (Bézier, parabolic bell, or splines), resolving internal wave reflections and centerline interactions.
 4. **Aerodynamic Performance Engine**: Evaluates exit momentum flux, pressure thrust, mass flow rate, and thrust coefficient $C_T$ via cross-sectional integration.
@@ -78,20 +76,6 @@ $$\bar{\theta}_{23} = \frac{\theta_2 + \theta_3}{2}, \quad \bar{\mu}_{23} = \fra
 - **Unit Process 3 (Wall Cancellation / Design)**: Wall contour turns to absorb incoming $C_+$ wave without reflection ($\theta_3 = \theta_2, \nu_3 = \nu_2$), yielding uniform axial flow at the exit.
 - **Unit Process 4 (Solid Wall Reflection / Direct Analysis)**: Flow tangency boundary condition ($\theta_3 = \arctan(y'_w(x_3))$), reflecting incoming $C_+$ wave into a new $C_-$ wave ($K_{-,3} = \theta_3 + \nu_3$).
 
----
-
-### 3. Nozzle Contour Synthesis (MLN) vs. Direct Analysis
-
-```
-  Design Mode (Anderson Sec 11.5)              Direct Analysis Mode (Arbitrary Wall)
-  
-  Wall \~~~~~ Cancellation Wall ~~~~~~         Wall \---- Solid Wall Reflections ----\
-        \  \   /   /   /   /                         \  \   /  \  /   /  \  /   /
-Throat ->\  \ /   /   /   / (Reflected C+)     Throat ->\  \ /    \/   /    \/   /
-          \  X   /   /   /                               \  X     /\  /     /\  /
-  Axis  ---o---o---o---o--------------         Axis  ---o---o---o---o---o---o--------
-         Waves absorbed, theta_exit = 0                 Waves reflect off solid contour
-```
 
 ---
 
